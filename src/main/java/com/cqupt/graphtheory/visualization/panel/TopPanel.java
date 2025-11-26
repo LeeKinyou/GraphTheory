@@ -9,18 +9,15 @@ import java.awt.*;
  */
 public class TopPanel extends JPanel {
 
-    private final JLabel titleLabel;
-    private final JLabel authorLabel;
-
     public TopPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.LIGHT_GRAY); // Optional styling
 
-        titleLabel = new JLabel("第五组");
+        JLabel titleLabel = new JLabel("第五组");
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18));
 
-        authorLabel = new JLabel("李金洋");
+        JLabel authorLabel = new JLabel("李金洋");
         authorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         add(Box.createVerticalStrut(10));

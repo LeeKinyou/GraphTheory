@@ -1,4 +1,4 @@
-package com.cqupt.graphtheory.algorithm;
+package com.cqupt.graphtheory.algorithm.util;
 
 import com.cqupt.graphtheory.entity.Edge;
 import com.cqupt.graphtheory.entity.Node;
