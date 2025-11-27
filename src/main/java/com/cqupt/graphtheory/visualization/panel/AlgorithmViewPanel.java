@@ -1,7 +1,9 @@
 package com.cqupt.graphtheory.visualization.panel;
 
 
-import com.cqupt.graphtheory.algorithm.util.MSTGeneration;
+import com.cqupt.graphtheory.algorithm.Kruskal;
+import com.cqupt.graphtheory.algorithm.util.CircleGeneration;
+import com.cqupt.graphtheory.algorithm.util.TreeGeneration;
 import com.cqupt.graphtheory.entity.Edge;
 import com.cqupt.graphtheory.entity.Node;
 import com.cqupt.graphtheory.visualization.frame.MainAppFrame;
@@ -31,13 +33,15 @@ public class AlgorithmViewPanel extends JPanel {
 
     protected ArrayList<Node> nodes;
     protected ArrayList<Edge> edges;
-    protected Integer stepCounter = 0;
+    protected ArrayList<Edge> selectEdges;
+    protected Integer stepCounter = -1;
     
     public AlgorithmViewPanel(MainAppFrame parent, String algorithmName) {
         this.parentFrame = parent;
         this.algorithmName = algorithmName;
         nodes = new ArrayList<>();
         edges = new ArrayList<>();
+        selectEdges = new ArrayList<>();
         initializeComponents();
         setupLayout();
         addEventListeners();
@@ -153,16 +157,14 @@ public class AlgorithmViewPanel extends JPanel {
                 return;
             }
 
-            // 清空之前的数据
             nodes.clear();
             edges.clear();
+            selectEdges.clear();
+            stepCounter = -1;
 
-            // 生成节点
-            nodes = MSTGeneration.generateNodes(nodeCount, graphPanel);
-            // 生成边
-            edges = MSTGeneration.generateEdges(edgeCount, nodes);
+            nodes = TreeGeneration.generateNodes(nodeCount, graphPanel);
+            edges = TreeGeneration.generateEdges(edgeCount, nodes);
 
-            // 重新绘制图形
             graphPanel.repaint();
 
         } catch (NumberFormatException ex) {
@@ -176,9 +178,14 @@ public class AlgorithmViewPanel extends JPanel {
             return;
         }
         JOptionPane.showMessageDialog(this, "算法运行成功！");
+        stepCounter = 0;
     }
 
     protected void runPreStep() {
+        if (stepCounter <= 0) {
+            JOptionPane.showMessageDialog(this, "已经到头了");
+            return;
+        }
         stepCounter--;
         stepCounterLabel.setText("步骤: " + stepCounter);
         graphPanel.repaint();
@@ -186,51 +193,53 @@ public class AlgorithmViewPanel extends JPanel {
     }
 
     protected void runNextStep() {
+        if (stepCounter >= selectEdges.size()) {
+            JOptionPane.showMessageDialog(this, "算法运行结束！\n" +
+                    " 最小边权和为：" + getAlgorithmValue());
+            return;
+        }
+        if (stepCounter == -1) {
+            JOptionPane.showMessageDialog(this, "请先运行算法！");
+            return;
+        }
         stepCounter++;
         stepCounterLabel.setText("步骤: " + stepCounter);
-        stepCounterLabel.revalidate();
-        stepCounterLabel.repaint();
+        graphPanel.repaint();
+        graphPanel.revalidate();
     }
 
+    protected int getAlgorithmValue() {
+        return -1;
+    }
 
     protected void drawGraph(Graphics g) {
+        drawEdges(g);
+        drawNodes(g);
     }
 
     // 绘制边
-    protected void drawEdges(Graphics g, ArrayList<Edge> selectEdges, int step) {
+    protected void drawEdges(Graphics g) {
         g.setColor(Color.BLACK);
         for (Edge edge : edges) {
-            drawEdge(g, edge, new ArrayList<>());
+            drawEdge(g, edge);
         }
 
         g.setColor(Color.RED);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(2.0f));
-        for (int i = 0; i < step && i < selectEdges.size(); i++) {
-            drawEdge(g2d, selectEdges.get(i), selectEdges);
+        for (int i = 0; i < stepCounter && i < selectEdges.size(); i++) {
+            drawEdge(g2d, selectEdges.get(i));
         }
     }
 
     // 绘制单条边
-    protected void drawEdge(Graphics g, Edge edge, ArrayList<Edge> selectEdges) {
-        Graphics2D g2d = (Graphics2D) g;
-        Stroke originalStroke = g2d.getStroke();
-
-        if (selectEdges.contains(edge)) {
-            g2d.setStroke(new BasicStroke(2.0f));
-        }
-
+    protected void drawEdge(Graphics g, Edge edge) {
         g.drawLine(edge.getFrom().getX(), edge.getFrom().getY(), edge.getTo().getX(), edge.getTo().getY());
 
         // 绘制权重
         int midX = (edge.getFrom().getX() + edge.getTo().getX()) / 2;
         int midY = (edge.getFrom().getY() + edge.getTo().getY()) / 2;
-        g.setColor(Color.BLUE);
         g.drawString(String.valueOf(edge.getWeight()), midX, midY);
-
-        // 恢复颜色和线宽
-        g.setColor(selectEdges.contains(edge) ? Color.RED : Color.BLACK);
-        g2d.setStroke(originalStroke);
     }
 
     // 绘制节点

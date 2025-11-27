@@ -1,0 +1,91 @@
+package com.cqupt.graphtheory.algorithm.util;
+
+import com.cqupt.graphtheory.entity.Edge;
+import com.cqupt.graphtheory.entity.Node;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+public class TreeGeneration {
+    public static ArrayList<Node> generateNodes(int count, JPanel graphPanel) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        int width = graphPanel.getWidth();
+        int height = graphPanel.getHeight();
+
+        int levels = (int) (Math.log(count) / Math.log(2)) + 1;
+        int levelHeight = height / (levels + 1);
+
+        for (int i = 0; i < count; i++) {
+            int level = (int) (Math.log(i + 1) / Math.log(2));
+            int nodesInLevel = (int) Math.pow(2, level);
+            int positionInLevel = i - (nodesInLevel - 1);
+
+            int x = width / (nodesInLevel + 1) * (positionInLevel + 1);
+            int y = levelHeight * (level + 1);
+
+            nodes.add(new Node(i, x, y));
+        }
+        return nodes;
+    }
+
+    public static ArrayList<Edge> generateEdges(int count, ArrayList<Node> nodes) {
+        ArrayList<Edge> edges = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < nodes.size() && edges.size() < count; i++) {
+            int leftChildIndex = 2 * i + 1;
+            if (leftChildIndex < nodes.size()) {
+                int weight = random.nextInt(20) + 1;
+                edges.add(new Edge(nodes.get(i), nodes.get(leftChildIndex), weight));
+            }
+
+            int rightChildIndex = 2 * i + 2;
+            if (rightChildIndex < nodes.size()) {
+                int weight = random.nextInt(20) + 1;
+                edges.add(new Edge(nodes.get(i), nodes.get(rightChildIndex), weight));
+            }
+        }
+
+        while (edges.size() < count && edges.size() < nodes.size() * (nodes.size() - 1) / 2) {
+            int fromIndex = random.nextInt(nodes.size());
+            int toIndex = random.nextInt(nodes.size());
+
+            if (fromIndex != toIndex && !edgeExists(edges, fromIndex, toIndex)) {
+                int weight = random.nextInt(20) + 1;
+                edges.add(new Edge(nodes.get(fromIndex), nodes.get(toIndex), weight));
+            }
+        }
+
+        return edges;
+    }
+
+    public static Map<Integer, ArrayList<Integer>> generateAdjacencyList(ArrayList<Node> nodes, ArrayList<Edge> edges) {
+        Map<Integer, ArrayList<Integer>> adjacencyList = new HashMap<>();
+        for (Edge edge : edges) {
+            if (!adjacencyList.containsKey(edge.getFrom().getId())) {
+                adjacencyList.put(edge.getFrom().getId(), new ArrayList<>());
+            } else {
+                adjacencyList.get(edge.getFrom().getId()).add(edge.getTo().getId());
+            }
+            if (!adjacencyList.containsKey(edge.getTo().getId())) {
+                adjacencyList.put(edge.getTo().getId(), new ArrayList<>());
+            } else {
+                adjacencyList.get(edge.getTo().getId()).add(edge.getFrom().getId());
+            }
+        }
+        return adjacencyList;
+    }
+
+    private static boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
+        for (Edge edge : edges) {
+            if ((edge.getFrom().getId() == fromIndex && edge.getTo().getId() == toIndex) ||
+                    (edge.getFrom().getId() == toIndex && edge.getTo().getId() == fromIndex)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

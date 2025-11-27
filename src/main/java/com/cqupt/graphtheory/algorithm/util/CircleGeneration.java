@@ -8,11 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class MSTGeneration {
-    ArrayList<Edge> mstEdges = new ArrayList<>();
-    Integer stepIndex = -1;
-
-    // 生成节点
+public class CircleGeneration {
     public static ArrayList<Node> generateNodes(int count, JPanel graphPanel) {
         ArrayList<Node> nodes = new ArrayList<>();
         // 在圆形上均匀分布节点
@@ -29,7 +25,6 @@ public class MSTGeneration {
         return nodes;
     }
 
-    // 生成边
     public static ArrayList<Edge> generateEdges(int count, ArrayList<Node> nodes) {
         ArrayList<Edge> edges = new ArrayList<>();
         Random random = new Random();
@@ -38,7 +33,8 @@ public class MSTGeneration {
         for (int i = 1; i < nodes.size(); i++) {
             Node from = nodes.get(i - 1);
             Node to = nodes.get(i);
-            int weight = random.nextInt(20) + 1; // 权重1-20
+            // 权重1-20
+            int weight = random.nextInt(20) + 1;
             edges.add(new Edge(from, to, weight));
         }
 
@@ -51,7 +47,8 @@ public class MSTGeneration {
             if (fromIndex != toIndex && !edgeExists(edges, fromIndex, toIndex)) {
                 Node from = nodes.get(fromIndex);
                 Node to = nodes.get(toIndex);
-                int weight = random.nextInt(20) + 1; // 权重1-20
+                // 权重1-20
+                int weight = random.nextInt(20) + 1;
                 edges.add(new Edge(from, to, weight));
             }
         }
@@ -60,7 +57,6 @@ public class MSTGeneration {
         return edges;
     }
 
-    // 检查边是否存在
     private static boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
         for (Edge edge : edges) {
             if ((edge.getFrom().getId() == fromIndex && edge.getTo().getId() == toIndex) ||

@@ -1,9 +1,6 @@
 package com.cqupt.graphtheory.visualization.frame;
 
-import com.cqupt.graphtheory.visualization.panel.AlgorithmSelectionPanel;
-import com.cqupt.graphtheory.visualization.panel.KruskalAlgorithmPanel;
-import com.cqupt.graphtheory.visualization.panel.PrimAlgorithmPanel;
-import com.cqupt.graphtheory.visualization.panel.TopPanel;
+import com.cqupt.graphtheory.visualization.panel.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,9 +38,9 @@ public class MainAppFrame extends JFrame {
 
         cardPanel.add(selectionPanel, VIEW_SELECTION);
 
-        cardPanel.add(new KruskalAlgorithmPanel(this), VIEW_KRUSKAL);
-        cardPanel.add(new PrimAlgorithmPanel(this), VIEW_PRIM);
-        cardPanel.add(new JLabel("破圈算法内容", SwingConstants.CENTER), VIEW_TEAR_CYCLE);
+        cardPanel.add(new KruskalPanel(this), VIEW_KRUSKAL);
+        cardPanel.add(new PrimPanel(this), VIEW_PRIM);
+        cardPanel.add(new TearCirclePanel(this), VIEW_TEAR_CYCLE);
         cardPanel.add(new JLabel("Dijkstra算法内容", SwingConstants.CENTER), VIEW_DIJKSTRA);
         cardPanel.add(new JLabel("Floyd算法内容", SwingConstants.CENTER), VIEW_FLOYD);
         cardPanel.add(new JLabel("Floyd-Warshall算法内容", SwingConstants.CENTER), VIEW_FLOYD_WARSHALL);
