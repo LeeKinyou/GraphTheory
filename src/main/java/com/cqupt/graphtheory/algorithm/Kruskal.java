@@ -3,15 +3,19 @@ package com.cqupt.graphtheory.algorithm;
 import com.cqupt.graphtheory.algorithm.util.UnionFind;
 import com.cqupt.graphtheory.entity.Edge;
 import com.cqupt.graphtheory.entity.Node;
+import lombok.Getter;
 
 import java.util.ArrayList;
 
+@Getter
 public class Kruskal {
     private final ArrayList<Edge> mstEdges;
 
     private final ArrayList<Node> nodes;
 
     private final ArrayList<Edge> edges;
+
+    private int minValue = 0;
 
     public Kruskal(ArrayList<Node> nodes, ArrayList<Edge> edges) {
         this.nodes = nodes;
@@ -31,6 +35,7 @@ public class Kruskal {
 
             if (root1 != root2) {
                 mstEdges.add(edge);
+                minValue += edge.getWeight();
                 uf.union(root1, root2);
             }
         }

@@ -21,13 +21,17 @@ public class AlgorithmViewPanel extends JPanel {
     protected JTextField edgeCountField;
     protected JButton generateButton;
     protected JButton runAlgorithmButton;
+    protected JButton preButton;
+    protected JButton nextButton;
     protected JButton backButton;
+    protected JLabel stepCounterLabel;
     
     // 图形显示区域
     protected JPanel graphPanel;
 
     protected ArrayList<Node> nodes;
     protected ArrayList<Edge> edges;
+    protected Integer stepCounter = 0;
     
     public AlgorithmViewPanel(MainAppFrame parent, String algorithmName) {
         this.parentFrame = parent;
@@ -45,7 +49,10 @@ public class AlgorithmViewPanel extends JPanel {
         edgeCountField = new JTextField(5);
         generateButton = new JButton("生成图");
         runAlgorithmButton = new JButton("运行算法");
+        preButton = new JButton("上一步");
+        nextButton = new JButton("下一步");
         backButton = new JButton("返回主页面");
+        stepCounterLabel = new JLabel("步骤: 0");
         
         // 初始化图形显示区域
         graphPanel = new JPanel() {
@@ -65,13 +72,18 @@ public class AlgorithmViewPanel extends JPanel {
         
         // 顶部控制面板
         JPanel controlPanel = new JPanel(new FlowLayout());
+        controlPanel.add(new JLabel(algorithmName + "|"));
         controlPanel.add(new JLabel("节点数:"));
         controlPanel.add(nodeCountField);
         controlPanel.add(new JLabel("边数:"));
         controlPanel.add(edgeCountField);
         controlPanel.add(generateButton);
         controlPanel.add(runAlgorithmButton);
+        controlPanel.add(preButton);
+        controlPanel.add(nextButton);
         controlPanel.add(backButton);
+        controlPanel.add(stepCounterLabel);
+
         
         add(controlPanel, BorderLayout.NORTH);
         add(graphPanel, BorderLayout.CENTER);
@@ -91,6 +103,22 @@ public class AlgorithmViewPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 runAlgorithm();
+            }
+        });
+
+        // 上一步按钮事件
+        preButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                runPreStep();
+            }
+        });
+
+        // 下一步按钮事件
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                runNextStep();
             }
         });
         
@@ -120,6 +148,10 @@ public class AlgorithmViewPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "边数过多！最多只能有" + maxEdges + "条边。");
                 return;
             }
+            if (edgeCount < nodeCount - 1) {
+                JOptionPane.showMessageDialog(this, "边数过少！至少需要" + (nodeCount - 1) + "条边。");
+                return;
+            }
 
             // 清空之前的数据
             nodes.clear();
@@ -139,26 +171,43 @@ public class AlgorithmViewPanel extends JPanel {
     }
 
     protected void runAlgorithm() {
+        if (nodes == null || edges == null || nodes.isEmpty() || edges.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "请先生成图！");
+            return;
+        }
+        JOptionPane.showMessageDialog(this, "算法运行成功！");
     }
+
+    protected void runPreStep() {
+        stepCounter--;
+        stepCounterLabel.setText("步骤: " + stepCounter);
+        graphPanel.repaint();
+        graphPanel.revalidate();
+    }
+
+    protected void runNextStep() {
+        stepCounter++;
+        stepCounterLabel.setText("步骤: " + stepCounter);
+        stepCounterLabel.revalidate();
+        stepCounterLabel.repaint();
+    }
+
 
     protected void drawGraph(Graphics g) {
     }
 
     // 绘制边
-    protected void drawEdges(Graphics g, ArrayList<Edge> selectEdges) {
+    protected void drawEdges(Graphics g, ArrayList<Edge> selectEdges, int step) {
         g.setColor(Color.BLACK);
         for (Edge edge : edges) {
-            boolean isMstEdge = selectEdges.contains(edge);
-            if (!isMstEdge) {
-                drawEdge(g, edge, selectEdges);
-            }
+            drawEdge(g, edge, new ArrayList<>());
         }
 
         g.setColor(Color.RED);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(2.0f));
-        for (Edge edge : selectEdges) {
-            drawEdge(g2d, edge, selectEdges);
+        for (int i = 0; i < step && i < selectEdges.size(); i++) {
+            drawEdge(g2d, selectEdges.get(i), selectEdges);
         }
     }
 

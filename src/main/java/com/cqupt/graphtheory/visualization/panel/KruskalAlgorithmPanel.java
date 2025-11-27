@@ -15,6 +15,8 @@ import java.util.List;
 public class KruskalAlgorithmPanel extends AlgorithmViewPanel {
     protected ArrayList<Edge> mstEdges;
 
+    protected Kruskal kruskal;
+
     public KruskalAlgorithmPanel(MainAppFrame parent) {
         super(parent, "Kruskal算法");
         mstEdges = new ArrayList<>();
@@ -22,23 +24,38 @@ public class KruskalAlgorithmPanel extends AlgorithmViewPanel {
 
     @Override
     protected void runAlgorithm() {
-        if (nodes == null || edges == null || nodes.isEmpty() || edges.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "请先生成图！");
+        super.runAlgorithm();
+
+        mstEdges.clear();
+        kruskal = new Kruskal(nodes, edges);
+        mstEdges = kruskal.executeKruskal();
+    }
+
+    @Override
+    protected void runPreStep() {
+        if (stepCounter <= 0) {
+            JOptionPane.showMessageDialog(this, "已经到头了");
             return;
         }
-        mstEdges.clear();
+        super.runPreStep();
+        graphPanel.repaint();
+    }
 
-        Kruskal kruskal = new Kruskal(nodes, edges);
-        mstEdges = kruskal.executeKruskal();
-
+    @Override
+    protected void runNextStep() {
+        if (stepCounter >= mstEdges.size()) {
+            JOptionPane.showMessageDialog(this, "算法运行结束！\n" +
+                    " 最小边权和为：" + kruskal.getMinValue());
+            return;
+        }
+        super.runNextStep();
         graphPanel.repaint();
     }
 
     @Override
     protected void drawGraph(Graphics g) {
-        super.drawEdges(g, mstEdges);
+        super.drawEdges(g, mstEdges, super.stepCounter);
         super.drawNodes(g);
-        mstEdges.clear();
     }
 
 }

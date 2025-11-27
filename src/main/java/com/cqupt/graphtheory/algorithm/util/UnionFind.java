@@ -1,23 +1,25 @@
 package com.cqupt.graphtheory.algorithm.util;
 
+import java.util.ArrayList;
+
 public class UnionFind {
-    private final int[] parent;
-    private final int[] rank;
+    private final ArrayList<Integer> parent;
+    private final ArrayList<Integer> rank;
 
     public UnionFind(int n) {
-        parent = new int[n];
-        rank = new int[n];
+        parent = new ArrayList<>(n);
+        rank = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
-            parent[i] = i;
-            rank[i] = 0;
+            parent.add(i);
+            rank.add(0);
         }
     }
 
     public int find(int x) {
-        if (parent[x] != x) {
-            parent[x] = find(parent[x]); // 路径压缩
+        if (parent.get(x) != x) {
+            parent.set(x, find(parent.get(x)));
         }
-        return parent[x];
+        return parent.get(x);
     }
 
     public void union(int x, int y) {
@@ -25,14 +27,13 @@ public class UnionFind {
         int rootY = find(y);
 
         if (rootX != rootY) {
-            // 按秩合并
-            if (rank[rootX] < rank[rootY]) {
-                parent[rootX] = rootY;
-            } else if (rank[rootX] > rank[rootY]) {
-                parent[rootY] = rootX;
+            if (rank.get(rootX) < rank.get(rootY)) {
+                parent.set(rootX, rootY);
+            } else if (rank.get(rootX) > rank.get(rootY)) {
+                parent.set(rootY, rootX);
             } else {
-                parent[rootY] = rootX;
-                rank[rootX]++;
+                parent.set(rootY, rootX);
+                rank.set(rootX, rank.get(rootX) + 1);
             }
         }
     }
