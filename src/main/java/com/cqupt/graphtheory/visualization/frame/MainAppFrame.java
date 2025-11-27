@@ -2,6 +2,7 @@ package com.cqupt.graphtheory.visualization.frame;
 
 import com.cqupt.graphtheory.visualization.panel.AlgorithmSelectionPanel;
 import com.cqupt.graphtheory.visualization.panel.KruskalAlgorithmPanel;
+import com.cqupt.graphtheory.visualization.panel.PrimAlgorithmPanel;
 import com.cqupt.graphtheory.visualization.panel.TopPanel;
 
 import javax.swing.*;
@@ -41,14 +42,17 @@ public class MainAppFrame extends JFrame {
         cardPanel.add(selectionPanel, VIEW_SELECTION);
 
         cardPanel.add(new KruskalAlgorithmPanel(this), VIEW_KRUSKAL);
-        cardPanel.add(new JLabel("Prim算法内容", SwingConstants.CENTER), VIEW_PRIM);
+        cardPanel.add(new PrimAlgorithmPanel(this), VIEW_PRIM);
         cardPanel.add(new JLabel("破圈算法内容", SwingConstants.CENTER), VIEW_TEAR_CYCLE);
         cardPanel.add(new JLabel("Dijkstra算法内容", SwingConstants.CENTER), VIEW_DIJKSTRA);
         cardPanel.add(new JLabel("Floyd算法内容", SwingConstants.CENTER), VIEW_FLOYD);
         cardPanel.add(new JLabel("Floyd-Warshall算法内容", SwingConstants.CENTER), VIEW_FLOYD_WARSHALL);
         cardPanel.add(new JLabel("匈牙利算法内容", SwingConstants.CENTER), VIEW_HUNGARIAN);
         cardPanel.add(new JLabel("Kuhn-Munkres算法内容", SwingConstants.CENTER), VIEW_KUHN_MUNKRES);
-        cardPanel.add(new JLabel("退出", SwingConstants.CENTER), VIEW_EXIT);
+
+        JButton exitButton = new JButton("退出");
+        exitButton.addActionListener(e -> System.exit(0));
+        cardPanel.add(exitButton, VIEW_EXIT);
 
         add(topPanel, BorderLayout.NORTH);
         add(cardPanel, BorderLayout.CENTER);
