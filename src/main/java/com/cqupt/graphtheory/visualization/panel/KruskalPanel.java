@@ -9,8 +9,8 @@ import java.awt.*;
 public class KruskalPanel extends AlgorithmViewPanel {
     protected Kruskal kruskal;
 
-    public KruskalPanel(MainAppFrame parent) {
-        super(parent, "Kruskal算法");
+    public KruskalPanel(MainAppFrame parent, String algorithmName) {
+        super(parent, algorithmName);
     }
 
     @Override

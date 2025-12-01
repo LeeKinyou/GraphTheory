@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class CircleGeneration {
-    public static ArrayList<Node> generateNodes(int count, JPanel graphPanel) {
+public class CircleGeneration extends Generation {
+    @Override
+    public ArrayList<Node> generateNodes(int count, JPanel graphPanel) {
         ArrayList<Node> nodes = new ArrayList<>();
         // 在圆形上均匀分布节点
         int centerX = graphPanel.getWidth() / 2;
@@ -24,8 +25,8 @@ public class CircleGeneration {
         }
         return nodes;
     }
-
-    public static ArrayList<Edge> generateEdges(int count, ArrayList<Node> nodes) {
+    @Override
+    public ArrayList<Edge> generateEdges(int count, ArrayList<Node> nodes) {
         ArrayList<Edge> edges = new ArrayList<>();
         Random random = new Random();
 
@@ -57,7 +58,7 @@ public class CircleGeneration {
         return edges;
     }
 
-    private static boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
+    private boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
         for (Edge edge : edges) {
             if ((edge.getFrom().getId() == fromIndex && edge.getTo().getId() == toIndex) ||
                     (edge.getFrom().getId() == toIndex && edge.getTo().getId() == fromIndex)) {

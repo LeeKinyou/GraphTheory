@@ -3,6 +3,7 @@ package com.cqupt.graphtheory.visualization.panel;
 
 import com.cqupt.graphtheory.algorithm.Kruskal;
 import com.cqupt.graphtheory.algorithm.util.CircleGeneration;
+import com.cqupt.graphtheory.algorithm.util.GraphGenerationFactory;
 import com.cqupt.graphtheory.algorithm.util.TreeGeneration;
 import com.cqupt.graphtheory.entity.Edge;
 import com.cqupt.graphtheory.entity.Node;
@@ -21,6 +22,8 @@ public class AlgorithmViewPanel extends JPanel {
     // 控制面板组件
     protected JTextField nodeCountField;
     protected JTextField edgeCountField;
+    protected JTextField startNodeField;
+    protected JTextField endNodeField;
     protected JButton generateButton;
     protected JButton runAlgorithmButton;
     protected JButton preButton;
@@ -51,6 +54,10 @@ public class AlgorithmViewPanel extends JPanel {
         // 初始化输入组件
         nodeCountField = new JTextField(5);
         edgeCountField = new JTextField(5);
+        if (algorithmName.equals("DijkstraView")) {
+            startNodeField = new JTextField(5);
+            endNodeField = new JTextField(5);
+        }
         generateButton = new JButton("生成图");
         runAlgorithmButton = new JButton("运行算法");
         preButton = new JButton("上一步");
@@ -81,6 +88,12 @@ public class AlgorithmViewPanel extends JPanel {
         controlPanel.add(nodeCountField);
         controlPanel.add(new JLabel("边数:"));
         controlPanel.add(edgeCountField);
+        if (algorithmName.equals("DijkstraView")) {
+            controlPanel.add(new JLabel("起始节点:"));
+            controlPanel.add(startNodeField);
+            controlPanel.add(new JLabel("结束节点:"));
+            controlPanel.add(endNodeField);
+        }
         controlPanel.add(generateButton);
         controlPanel.add(runAlgorithmButton);
         controlPanel.add(preButton);
@@ -161,9 +174,8 @@ public class AlgorithmViewPanel extends JPanel {
             edges.clear();
             selectEdges.clear();
             stepCounter = -1;
-
-            nodes = TreeGeneration.generateNodes(nodeCount, graphPanel);
-            edges = TreeGeneration.generateEdges(edgeCount, nodes);
+            nodes = GraphGenerationFactory.generateNodes("tree", nodeCount, graphPanel);
+            edges = GraphGenerationFactory.generateEdges("tree", edgeCount, nodes);
 
             graphPanel.repaint();
 

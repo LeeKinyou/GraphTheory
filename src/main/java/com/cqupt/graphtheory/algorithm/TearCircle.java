@@ -1,5 +1,6 @@
 package com.cqupt.graphtheory.algorithm;
 
+import com.cqupt.graphtheory.algorithm.util.GraphGenerationFactory;
 import com.cqupt.graphtheory.algorithm.util.TreeGeneration;
 import com.cqupt.graphtheory.entity.Edge;
 import com.cqupt.graphtheory.entity.Node;
@@ -10,14 +11,14 @@ public class TearCircle {
     private final ArrayList<Edge> mstEdges; // 存储被删除的边（破圈移除的边）
     private final ArrayList<Node> nodes;
     private final ArrayList<Edge> edges;
-    private final Map<Integer, ArrayList<Integer>> adjacencyList; // 邻接表（节点ID -> 邻接节点ID列表）
+    private final Map<Integer, ArrayList<Map.Entry<Integer, Integer>>> adjacencyList; // 邻接表（节点ID -> 邻接节点ID列表）
     private final Map<String, Edge> edgeMap; // 快速查找两点间的边（key: "u-v"或"v-u"）
 
     public TearCircle(ArrayList<Node> nodes, ArrayList<Edge> edges) {
         this.nodes = nodes;
         this.edges = edges;
         this.mstEdges = new ArrayList<>();
-        this.adjacencyList = TreeGeneration.generateAdjacencyList(nodes, edges);
+        this.adjacencyList = GraphGenerationFactory.generateAdjacencyList("tree", nodes, edges);
         this.edgeMap = buildEdgeMap(); // 构建边的快速查找映射
     }
 
@@ -89,7 +90,8 @@ public class TearCircle {
         parent.put(current, parentNode);
 
         // 遍历邻接节点
-        for (int neighbor : adjacencyList.getOrDefault(current, new ArrayList<>())) {
+        for (Map.Entry<Integer, Integer> neighborEntry : adjacencyList.getOrDefault(current, new ArrayList<>())) {
+            int neighbor = neighborEntry.getKey();
             if (neighbor == parentNode) {
                 continue; // 跳过父节点，避免回边
             }
@@ -148,7 +150,7 @@ public class TearCircle {
         edgeMap.remove(v + "-" + u);
 
         // 3. 从邻接表中移除
-        adjacencyList.get(u).remove(Integer.valueOf(v));
-        adjacencyList.get(v).remove(Integer.valueOf(u));
+        adjacencyList.get(u).remove(java.lang.Integer.valueOf(v));
+        adjacencyList.get(v).remove(java.lang.Integer.valueOf(u));
     }
 }

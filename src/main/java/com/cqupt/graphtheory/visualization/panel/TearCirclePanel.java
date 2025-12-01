@@ -6,8 +6,8 @@ import com.cqupt.graphtheory.entity.Edge;
 import com.cqupt.graphtheory.visualization.frame.MainAppFrame;
 
 public class TearCirclePanel extends AlgorithmViewPanel {
-    public TearCirclePanel(MainAppFrame parent) {
-        super(parent, "TearCircle算法");
+    public TearCirclePanel(MainAppFrame parent, String algorithmName) {
+        super(parent, algorithmName);
     }
 
     @Override

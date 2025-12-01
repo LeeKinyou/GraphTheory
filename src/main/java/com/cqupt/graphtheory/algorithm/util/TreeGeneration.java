@@ -4,13 +4,11 @@ import com.cqupt.graphtheory.entity.Edge;
 import com.cqupt.graphtheory.entity.Node;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
-public class TreeGeneration {
-    public static ArrayList<Node> generateNodes(int count, JPanel graphPanel) {
+public class TreeGeneration extends Generation {
+    @Override
+    public ArrayList<Node> generateNodes(int count, JPanel graphPanel) {
         ArrayList<Node> nodes = new ArrayList<>();
         int width = graphPanel.getWidth();
         int height = graphPanel.getHeight();
@@ -31,7 +29,8 @@ public class TreeGeneration {
         return nodes;
     }
 
-    public static ArrayList<Edge> generateEdges(int count, ArrayList<Node> nodes) {
+    @Override
+    public ArrayList<Edge> generateEdges(int count, ArrayList<Node> nodes) {
         ArrayList<Edge> edges = new ArrayList<>();
         Random random = new Random();
 
@@ -62,24 +61,34 @@ public class TreeGeneration {
         return edges;
     }
 
-    public static Map<Integer, ArrayList<Integer>> generateAdjacencyList(ArrayList<Node> nodes, ArrayList<Edge> edges) {
-        Map<Integer, ArrayList<Integer>> adjacencyList = new HashMap<>();
+    public Map<Integer, ArrayList<Map.Entry<Integer, Integer>>> generateAdjacencyList(ArrayList<Node> nodes, ArrayList<Edge> edges) {
+        Map<Integer, ArrayList<Map.Entry<Integer, Integer>>> adjacencyList = new HashMap<>();
         for (Edge edge : edges) {
             if (!adjacencyList.containsKey(edge.getFrom().getId())) {
                 adjacencyList.put(edge.getFrom().getId(), new ArrayList<>());
+                adjacencyList.get(edge.getFrom().getId()).add(
+                        new AbstractMap.SimpleEntry<>(edge.getTo().getId(), edge.getWeight())
+                );
             } else {
-                adjacencyList.get(edge.getFrom().getId()).add(edge.getTo().getId());
+                adjacencyList.get(edge.getFrom().getId()).add(
+                        new AbstractMap.SimpleEntry<>(edge.getTo().getId(), edge.getWeight())
+                );
             }
             if (!adjacencyList.containsKey(edge.getTo().getId())) {
                 adjacencyList.put(edge.getTo().getId(), new ArrayList<>());
+                adjacencyList.get(edge.getTo().getId()).add(
+                        new AbstractMap.SimpleEntry<>(edge.getFrom().getId(), edge.getWeight())
+                );
             } else {
-                adjacencyList.get(edge.getTo().getId()).add(edge.getFrom().getId());
+                adjacencyList.get(edge.getTo().getId()).add(
+                        new AbstractMap.SimpleEntry<>(edge.getFrom().getId(), edge.getWeight())
+                );
             }
         }
         return adjacencyList;
     }
 
-    private static boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
+    private boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
         for (Edge edge : edges) {
             if ((edge.getFrom().getId() == fromIndex && edge.getTo().getId() == toIndex) ||
                     (edge.getFrom().getId() == toIndex && edge.getTo().getId() == fromIndex)) {

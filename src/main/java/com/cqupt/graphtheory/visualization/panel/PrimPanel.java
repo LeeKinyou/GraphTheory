@@ -10,8 +10,8 @@ public class PrimPanel extends AlgorithmViewPanel {
 
     protected Prim prim;
 
-    public PrimPanel(MainAppFrame parent) {
-        super(parent, "Prim算法");
+    public PrimPanel(MainAppFrame parent, String algorithmName) {
+        super(parent, algorithmName);
     }
 
     @Override

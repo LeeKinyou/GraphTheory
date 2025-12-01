@@ -38,10 +38,10 @@ public class MainAppFrame extends JFrame {
 
         cardPanel.add(selectionPanel, VIEW_SELECTION);
 
-        cardPanel.add(new KruskalPanel(this), VIEW_KRUSKAL);
-        cardPanel.add(new PrimPanel(this), VIEW_PRIM);
-        cardPanel.add(new TearCirclePanel(this), VIEW_TEAR_CYCLE);
-        cardPanel.add(new JLabel("Dijkstra算法内容", SwingConstants.CENTER), VIEW_DIJKSTRA);
+        cardPanel.add(new KruskalPanel(this, VIEW_KRUSKAL), VIEW_KRUSKAL);
+        cardPanel.add(new PrimPanel(this, VIEW_PRIM), VIEW_PRIM);
+        cardPanel.add(new TearCirclePanel(this, VIEW_TEAR_CYCLE), VIEW_TEAR_CYCLE);
+        cardPanel.add(new DijkstraPanel(this, VIEW_DIJKSTRA), VIEW_DIJKSTRA);
         cardPanel.add(new JLabel("Floyd算法内容", SwingConstants.CENTER), VIEW_FLOYD);
         cardPanel.add(new JLabel("Floyd-Warshall算法内容", SwingConstants.CENTER), VIEW_FLOYD_WARSHALL);
         cardPanel.add(new JLabel("匈牙利算法内容", SwingConstants.CENTER), VIEW_HUNGARIAN);
