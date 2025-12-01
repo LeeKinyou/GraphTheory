@@ -42,7 +42,7 @@ public class MainAppFrame extends JFrame {
         cardPanel.add(new PrimPanel(this, VIEW_PRIM), VIEW_PRIM);
         cardPanel.add(new TearCirclePanel(this, VIEW_TEAR_CYCLE), VIEW_TEAR_CYCLE);
         cardPanel.add(new DijkstraPanel(this, VIEW_DIJKSTRA), VIEW_DIJKSTRA);
-        cardPanel.add(new JLabel("Floyd算法内容", SwingConstants.CENTER), VIEW_FLOYD);
+        cardPanel.add(new FloydPanel(this, VIEW_FLOYD), VIEW_FLOYD);
         cardPanel.add(new JLabel("Floyd-Warshall算法内容", SwingConstants.CENTER), VIEW_FLOYD_WARSHALL);
         cardPanel.add(new JLabel("匈牙利算法内容", SwingConstants.CENTER), VIEW_HUNGARIAN);
         cardPanel.add(new JLabel("Kuhn-Munkres算法内容", SwingConstants.CENTER), VIEW_KUHN_MUNKRES);

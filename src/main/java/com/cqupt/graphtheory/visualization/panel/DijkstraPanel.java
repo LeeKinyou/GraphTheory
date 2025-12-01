@@ -11,6 +11,7 @@ public class DijkstraPanel extends AlgorithmViewPanel {
 
     public DijkstraPanel(MainAppFrame parent, String algorithmName) {
         super(parent, algorithmName);
+        super.graphType = "tree";
     }
 
     @Override

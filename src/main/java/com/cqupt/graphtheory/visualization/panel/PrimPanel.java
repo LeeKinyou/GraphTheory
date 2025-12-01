@@ -12,6 +12,8 @@ public class PrimPanel extends AlgorithmViewPanel {
 
     public PrimPanel(MainAppFrame parent, String algorithmName) {
         super(parent, algorithmName);
+        super.graphType = "tree";
+
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.cqupt.graphtheory.visualization.frame.MainAppFrame;
 public class TearCirclePanel extends AlgorithmViewPanel {
     public TearCirclePanel(MainAppFrame parent, String algorithmName) {
         super(parent, algorithmName);
+        super.graphType = "tree";
     }
 
     @Override

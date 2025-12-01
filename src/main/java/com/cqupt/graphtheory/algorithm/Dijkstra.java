@@ -32,7 +32,7 @@ public class Dijkstra {
     public Dijkstra(ArrayList<Node> nodes, ArrayList<Edge> edges, int s, int t) {
         this.nodes = nodes;
         this.edges = edges;
-        this.adjacencyList = GraphGenerationFactory.generateAdjacencyList("tree", nodes, edges);
+        this.adjacencyList = GraphGenerationFactory.generateAdjacencyList("graph", nodes, edges);
         parent = new ArrayList<>(Collections.nCopies(nodes.size(), -1));
         this.distance = new ArrayList<>(Collections.nCopies(nodes.size(), Integer.MAX_VALUE));
         this.visited = new ArrayList<>(Collections.nCopies(nodes.size(), false));

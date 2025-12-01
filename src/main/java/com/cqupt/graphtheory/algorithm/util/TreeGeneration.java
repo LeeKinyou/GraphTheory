@@ -88,6 +88,33 @@ public class TreeGeneration extends Generation {
         return adjacencyList;
     }
 
+    public ArrayList<ArrayList<Integer>> generateAdjacencyMatrix(ArrayList<Node> nodes, ArrayList<Edge> edges) {
+        int n = nodes.size();
+        ArrayList<ArrayList<Integer>> adjacencyMatrix = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            ArrayList<Integer> row = new ArrayList<>(n);
+            for (int j = 0; j < n; j++) {
+                if (i == j) {
+                    row.add(0);
+                } else {
+                    row.add(Integer.MAX_VALUE);
+                }
+            }
+            adjacencyMatrix.add(row);
+        }
+
+        for (Edge edge : edges) {
+            int fromId = edge.getFrom().getId();
+            int toId = edge.getTo().getId();
+            int weight = edge.getWeight();
+            if (fromId < n && toId < n) {
+                adjacencyMatrix.get(fromId).set(toId, weight);
+                adjacencyMatrix.get(toId).set(fromId, weight);
+            }
+        }
+        return adjacencyMatrix;
+    }
+
     private boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
         for (Edge edge : edges) {
             if ((edge.getFrom().getId() == fromIndex && edge.getTo().getId() == toIndex) ||

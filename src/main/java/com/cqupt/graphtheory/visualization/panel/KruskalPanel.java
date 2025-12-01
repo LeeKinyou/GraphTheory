@@ -11,6 +11,7 @@ public class KruskalPanel extends AlgorithmViewPanel {
 
     public KruskalPanel(MainAppFrame parent, String algorithmName) {
         super(parent, algorithmName);
+        super.graphType = "tree";
     }
 
     @Override

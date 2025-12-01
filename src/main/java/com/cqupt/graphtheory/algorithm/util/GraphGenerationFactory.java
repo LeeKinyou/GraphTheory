@@ -13,6 +13,7 @@ public class GraphGenerationFactory {
         return switch (type.toLowerCase()) {
             case "circle" -> new CircleGeneration().generateNodes(count, graphPanel);
             case "tree" -> new TreeGeneration().generateNodes(count, graphPanel);
+            case "graph" -> new GraphGeneration().generateNodes(count, graphPanel);
             default -> throw new IllegalArgumentException("Unknown generation type: " + type);
         };
     }
@@ -21,6 +22,7 @@ public class GraphGenerationFactory {
         return switch (type.toLowerCase()) {
             case "circle" -> new CircleGeneration().generateEdges(count, nodes);
             case "tree" -> new TreeGeneration().generateEdges(count, nodes);
+            case "graph" -> new GraphGeneration().generateEdges(count, nodes);
             default -> throw new IllegalArgumentException("Unknown generation type: " + type);
         };
     }
@@ -28,6 +30,14 @@ public class GraphGenerationFactory {
     public static Map<Integer, ArrayList<Map.Entry<Integer, Integer>>> generateAdjacencyList(String type, ArrayList<Node> nodes, ArrayList<Edge> edges) {
         return switch (type.toLowerCase()) {
             case "tree" -> new TreeGeneration().generateAdjacencyList(nodes, edges);
+            case "graph" -> new GraphGeneration().generateAdjacencyList(nodes, edges);
+            default -> throw new IllegalArgumentException("Unknown generation type: " + nodes.size());
+        };
+    }
+
+    public static ArrayList<ArrayList<Integer>> generateAdjacencyMatrix(String type, ArrayList<Node> nodes, ArrayList<Edge> edges) {
+        return switch (type.toLowerCase()) {
+            case "tree" -> new TreeGeneration().generateAdjacencyMatrix(nodes, edges);
             default -> throw new IllegalArgumentException("Unknown generation type: " + nodes.size());
         };
     }
