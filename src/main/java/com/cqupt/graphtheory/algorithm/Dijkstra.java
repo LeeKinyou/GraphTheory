@@ -33,7 +33,7 @@ public class Dijkstra {
         this.nodes = nodes;
         this.edges = edges;
         this.adjacencyList = GraphGenerationFactory.generateAdjacencyList("graph", nodes, edges);
-        parent = new ArrayList<>(Collections.nCopies(nodes.size(), -1));
+        this.parent = new ArrayList<>(Collections.nCopies(nodes.size(), -1));
         this.distance = new ArrayList<>(Collections.nCopies(nodes.size(), Integer.MAX_VALUE));
         this.visited = new ArrayList<>(Collections.nCopies(nodes.size(), false));
         this.pq = new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));

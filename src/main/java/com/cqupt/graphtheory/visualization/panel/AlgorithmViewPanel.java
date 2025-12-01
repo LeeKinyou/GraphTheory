@@ -24,7 +24,8 @@ public class AlgorithmViewPanel extends JPanel {
     protected JTextField edgeCountField;
     protected JTextField startNodeField;
     protected JTextField endNodeField;
-    protected JButton generateButton;
+    protected JButton randomGenerateButton;
+    protected JButton inputGenerateButton;
     protected JButton runAlgorithmButton;
     protected JButton preButton;
     protected JButton nextButton;
@@ -33,6 +34,11 @@ public class AlgorithmViewPanel extends JPanel {
     
     // 图形显示区域
     protected JPanel graphPanel;
+
+    protected JTextArea inputTextArea;
+    protected JTextArea outputTextArea;
+    protected JScrollPane inputScrollPane;
+    protected JScrollPane outputScrollPane;
 
     protected ArrayList<Node> nodes;
     protected ArrayList<Edge> edges;
@@ -57,13 +63,22 @@ public class AlgorithmViewPanel extends JPanel {
         edgeCountField = new JTextField(5);
         startNodeField = new JTextField(5);
         endNodeField = new JTextField(5);
-        generateButton = new JButton("生成图");
+        randomGenerateButton = new JButton("随机生成图");
+        inputGenerateButton = new JButton("输入生成图");
         runAlgorithmButton = new JButton("运行算法");
         preButton = new JButton("上一步");
         nextButton = new JButton("下一步");
         backButton = new JButton("返回主页面");
         stepCounterLabel = new JLabel("步骤: 0");
-        
+
+        // 初始化输入输出组件
+        inputTextArea = new JTextArea(10, 20);
+        outputTextArea = new JTextArea(10, 20);
+        outputTextArea.setEditable(false);
+
+        inputScrollPane = new JScrollPane(inputTextArea);
+        outputScrollPane = new JScrollPane(outputTextArea);
+
         // 初始化图形显示区域
         graphPanel = new JPanel() {
             @Override
@@ -79,8 +94,8 @@ public class AlgorithmViewPanel extends JPanel {
     
     private void setupLayout() {
         setLayout(new BorderLayout());
-        
-        // 顶部控制面板
+
+        // 顶部控制面板保持不变
         JPanel controlPanel = new JPanel(new FlowLayout());
         controlPanel.add(new JLabel(algorithmName + "|"));
         controlPanel.add(new JLabel("节点数:"));
@@ -94,28 +109,54 @@ public class AlgorithmViewPanel extends JPanel {
             controlPanel.add(new JLabel("结束节点:"));
             controlPanel.add(endNodeField);
         }
-        controlPanel.add(generateButton);
+        controlPanel.add(randomGenerateButton);
+        controlPanel.add(inputGenerateButton);
         controlPanel.add(runAlgorithmButton);
         controlPanel.add(preButton);
         controlPanel.add(nextButton);
         controlPanel.add(backButton);
         controlPanel.add(stepCounterLabel);
-
-        
         add(controlPanel, BorderLayout.NORTH);
-        add(graphPanel, BorderLayout.CENTER);
+
+        // 创建左侧面板（图显示区域）
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.add(graphPanel, BorderLayout.CENTER);
+        add(leftPanel, BorderLayout.WEST);
+
+        // 创建右侧面板（输入输出区域）
+        JPanel rightPanel = new JPanel(new GridLayout(2, 1));
+
+        // 输入区域
+        JPanel inputPanel = new JPanel(new BorderLayout());
+        inputPanel.setBorder(BorderFactory.createTitledBorder("输入区域"));
+        inputPanel.add(new JScrollPane(inputTextArea), BorderLayout.CENTER);
+
+        // 输出区域
+        JPanel outputPanel = new JPanel(new BorderLayout());
+        outputPanel.setBorder(BorderFactory.createTitledBorder("输出区域"));
+        outputPanel.add(new JScrollPane(outputTextArea), BorderLayout.CENTER);
+
+        rightPanel.add(inputPanel);
+        rightPanel.add(outputPanel);
+
+        add(rightPanel, BorderLayout.CENTER);
     }
     
     private void addEventListeners() {
-        // 生成图按钮事件
-        generateButton.addActionListener(new ActionListener() {
+        randomGenerateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 generateGraph();
             }
         });
-        
-        // 运行算法按钮事件
+
+        inputGenerateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                inputGenerateGraph();
+            }
+        });
+
         runAlgorithmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -123,7 +164,6 @@ public class AlgorithmViewPanel extends JPanel {
             }
         });
 
-        // 上一步按钮事件
         preButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,21 +171,22 @@ public class AlgorithmViewPanel extends JPanel {
             }
         });
 
-        // 下一步按钮事件
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 runNextStep();
             }
         });
-        
-        // 返回按钮事件
+
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 parentFrame.showView(MainAppFrame.VIEW_SELECTION);
             }
         });
+    }
+
+    protected void inputGenerateGraph() {
     }
 
     protected void generateGraph() {
