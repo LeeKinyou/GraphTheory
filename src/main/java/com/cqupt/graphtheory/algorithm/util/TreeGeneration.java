@@ -61,33 +61,6 @@ public class TreeGeneration extends Generation {
         return edges;
     }
 
-    public Map<Integer, ArrayList<Map.Entry<Integer, Integer>>> generateAdjacencyList(ArrayList<Node> nodes, ArrayList<Edge> edges) {
-        Map<Integer, ArrayList<Map.Entry<Integer, Integer>>> adjacencyList = new HashMap<>();
-        for (Edge edge : edges) {
-            if (!adjacencyList.containsKey(edge.getFrom().getId())) {
-                adjacencyList.put(edge.getFrom().getId(), new ArrayList<>());
-                adjacencyList.get(edge.getFrom().getId()).add(
-                        new AbstractMap.SimpleEntry<>(edge.getTo().getId(), edge.getWeight())
-                );
-            } else {
-                adjacencyList.get(edge.getFrom().getId()).add(
-                        new AbstractMap.SimpleEntry<>(edge.getTo().getId(), edge.getWeight())
-                );
-            }
-            if (!adjacencyList.containsKey(edge.getTo().getId())) {
-                adjacencyList.put(edge.getTo().getId(), new ArrayList<>());
-                adjacencyList.get(edge.getTo().getId()).add(
-                        new AbstractMap.SimpleEntry<>(edge.getFrom().getId(), edge.getWeight())
-                );
-            } else {
-                adjacencyList.get(edge.getTo().getId()).add(
-                        new AbstractMap.SimpleEntry<>(edge.getFrom().getId(), edge.getWeight())
-                );
-            }
-        }
-        return adjacencyList;
-    }
-
     public ArrayList<ArrayList<Integer>> generateAdjacencyMatrix(ArrayList<Node> nodes, ArrayList<Edge> edges) {
         int n = nodes.size();
         ArrayList<ArrayList<Integer>> adjacencyMatrix = new ArrayList<>(n);
@@ -113,15 +86,5 @@ public class TreeGeneration extends Generation {
             }
         }
         return adjacencyMatrix;
-    }
-
-    private boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
-        for (Edge edge : edges) {
-            if ((edge.getFrom().getId() == fromIndex && edge.getTo().getId() == toIndex) ||
-                    (edge.getFrom().getId() == toIndex && edge.getTo().getId() == fromIndex)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

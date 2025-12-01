@@ -87,7 +87,8 @@ public class AlgorithmViewPanel extends JPanel {
         controlPanel.add(nodeCountField);
         controlPanel.add(new JLabel("边数:"));
         controlPanel.add(edgeCountField);
-        if (algorithmName.equals("DijkstraView") || algorithmName.equals("FloydView")) {
+        if (algorithmName.equals("DijkstraView") || algorithmName.equals("FloydView")
+                || algorithmName.equals("FloydWarshallView")) {
             controlPanel.add(new JLabel("起始节点:"));
             controlPanel.add(startNodeField);
             controlPanel.add(new JLabel("结束节点:"));

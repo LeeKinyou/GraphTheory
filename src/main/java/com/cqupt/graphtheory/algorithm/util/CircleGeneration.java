@@ -57,14 +57,4 @@ public class CircleGeneration extends Generation {
         Collections.shuffle(edges);
         return edges;
     }
-
-    private boolean edgeExists(ArrayList<Edge> edges, int fromIndex, int toIndex) {
-        for (Edge edge : edges) {
-            if ((edge.getFrom().getId() == fromIndex && edge.getTo().getId() == toIndex) ||
-                    (edge.getFrom().getId() == toIndex && edge.getTo().getId() == fromIndex)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
