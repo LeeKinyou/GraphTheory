@@ -17,11 +17,13 @@ public class TopPanel extends JPanel {
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18));
 
-        JLabel authorLabel = new JLabel("李金洋");
+        JLabel authorLabel = new JLabel("李金洋、严书盈、冯佳慧、曹冰雪");
         authorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel coderAuthorLabel = new JLabel("Coded & designed by Lee Kinyou with Java");
         coderAuthorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        coderAuthorLabel.setForeground(Color.GRAY);
+        coderAuthorLabel.setFont(coderAuthorLabel.getFont().deriveFont(12f)); // 设置字体大小为12
 
         add(Box.createVerticalStrut(10));
         add(titleLabel);

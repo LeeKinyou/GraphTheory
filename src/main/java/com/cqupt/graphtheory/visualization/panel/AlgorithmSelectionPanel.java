@@ -30,11 +30,11 @@ public class AlgorithmSelectionPanel extends JPanel {
 
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = new JButton(buttonLabels[i]);
+            button.setFont(button.getFont().deriveFont(16f));
             if (i < viewNames.length) {
                 final String targetView = viewNames[i];
                 button.addActionListener(e -> parentFrame.showView(targetView));
             } else {
-                // Special case for the exit button
                 button.addActionListener(e -> System.exit(0));
             }
             add(button);
