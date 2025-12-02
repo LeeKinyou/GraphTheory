@@ -37,6 +37,7 @@ public class Prim {
         Node startNode = nodes.getFirst();
         Set<Node> visited = new HashSet<>();
 
+        // 小根堆
         PriorityQueue<Map.Entry<Integer, Map.Entry<Node, Edge>>> heap =
                 new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getKey));
 
@@ -56,6 +57,7 @@ public class Prim {
                 minValue += weight;
             }
 
+            // 把当前节点的所有未遍历邻接节点加入堆中
             for (Map.Entry<Node, Edge> neighborEntry : mp.get(currNode)) {
                 Node neighbor = neighborEntry.getKey();
                 Edge edgeToNeighbor = neighborEntry.getValue();

@@ -44,6 +44,7 @@ public class AlgorithmViewPanel extends JPanel {
     protected ArrayList<Edge> edges;
     protected ArrayList<Edge> selectEdges;
     protected Integer stepCounter = -1;
+    protected Boolean isDrawNumber = true;
     protected String graphType;
     
     public AlgorithmViewPanel(MainAppFrame parent, String algorithmName) {
@@ -72,7 +73,7 @@ public class AlgorithmViewPanel extends JPanel {
         stepCounterLabel = new JLabel("步骤: 0");
 
         // 初始化输入输出组件
-        inputTextArea = new JTextArea(10, 20);
+        inputTextArea = new JTextArea(10, 50);
 
         // 添加焦点监听器到初始化部分
         inputTextArea.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -85,27 +86,24 @@ public class AlgorithmViewPanel extends JPanel {
 
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (inputTextArea.getText().isEmpty()) {
-                    inputTextArea.setText("e.g.请输入邻接矩阵（不要加这两行）:\nadjacencyMatrix[i][j]代表从节点i到节点j有一条权为w的边\n4\n0 1 1 0\n1 0 0 0\n1 0 0 1\n0 0 1 0");
+                    inputTextArea.setText("e.g.请输入邻接矩阵（不要加这两行）:\nadjacencyMatrix[i][j]代表从节点i到节点j有一条权为w的边\n4\n0 2 3 0\n2 0 0 0\n3 0 0 1\n0 0 1 0");
                     inputTextArea.setForeground(Color.GRAY);
                 }
             }
         });
-        inputTextArea.setText("e.g.请输入邻接矩阵（不要加这两行）:\nadjacencyMatrix[i][j]代表从节点i到节点j有一条权为w的边\n4\n0 1 1 0\n1 0 0 0\n1 0 0 1\n0 0 1 0");
-        inputTextArea.setText("e.g.请输入邻接矩阵（不要加这两行）:\nadjacencyMatrix[i][j]代表从节点i到节点j有一条权为w的边\n4\n0 1 1 0\n1 0 0 0\n1 0 0 1\n0 0 1 0");
+        inputTextArea.setText("e.g.请输入邻接矩阵（不要加这两行）:\nadjacencyMatrix[i][j]代表从节点i到节点j有一条权为w的边\n4\n0 2 3 0\n2 0 0 0\n3 0 0 1\n0 0 1 0");
         inputTextArea.setForeground(Color.GRAY);
 
-        outputTextArea = new JTextArea(10, 20);
+        outputTextArea = new JTextArea(10, 50);
         outputTextArea.setEditable(false);
 
         inputScrollPane = new JScrollPane(inputTextArea);
         outputScrollPane = new JScrollPane(outputTextArea);
 
-        // 初始化图形显示区域
         graphPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                // 这里绘制图结构
                 drawGraph(g);
             }
         };
@@ -141,7 +139,6 @@ public class AlgorithmViewPanel extends JPanel {
 
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(graphPanel, BorderLayout.CENTER);
-        add(leftPanel, BorderLayout.WEST);
 
         JPanel rightPanel = new JPanel(new GridLayout(2, 1));
 
@@ -156,7 +153,10 @@ public class AlgorithmViewPanel extends JPanel {
         rightPanel.add(inputPanel);
         rightPanel.add(outputPanel);
 
-        add(rightPanel, BorderLayout.CENTER);
+        // 使用JSplitPane来分割左右面板
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
+        splitPane.setResizeWeight(1.0);
+        add(splitPane, BorderLayout.CENTER);
     }
     
     private void addEventListeners() {
@@ -205,42 +205,35 @@ public class AlgorithmViewPanel extends JPanel {
 
     protected void inputGenerateGraph() {
         try {
-            // 解析输入数据
             String[] lines = inputTextArea.getText().split("\n");
             if (lines.length < 1) {
                 JOptionPane.showMessageDialog(this, "输入格式错误！");
                 return;
             }
 
-            // 如果是提示文本，则不处理
             if (inputTextArea.getForeground() == Color.GRAY) {
                 JOptionPane.showMessageDialog(this, "请输入有效数据！");
                 return;
             }
 
-            // 获取节点数量
             int nodeCount = Integer.parseInt(lines[0]);
             if (nodeCount <= 0) {
                 JOptionPane.showMessageDialog(this, "节点数必须大于0！");
                 return;
             }
 
-            // 检查是否有足够的行数
             if (lines.length < nodeCount + 1) {
                 JOptionPane.showMessageDialog(this, "输入矩阵行数不足！");
                 return;
             }
 
-            // 清空现有数据
             nodes.clear();
             edges.clear();
             selectEdges.clear();
             stepCounter = -1;
 
-            // 生成节点
             nodes = GraphGenerationFactory.generateNodes(graphType, nodeCount, graphPanel);
 
-            // 解析邻接矩阵并生成边
             for (int i = 1; i <= nodeCount; i++) {
                 String[] weights = lines[i].trim().split("\\s+");
                 if (weights.length != nodeCount) {
@@ -250,7 +243,6 @@ public class AlgorithmViewPanel extends JPanel {
 
                 for (int j = 0; j < nodeCount; j++) {
                     int weight = Integer.parseInt(weights[j]);
-                    // 只处理上三角部分避免重复边，且不处理自己到自己的边
                     if (i-1 < j && weight > 0) {
                         Edge edge = new Edge(nodes.get(i-1), nodes.get(j), weight);
                         edges.add(edge);
@@ -285,7 +277,7 @@ public class AlgorithmViewPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "边数过多！最多只能有" + maxEdges + "条边。");
                 return;
             }
-            if (edgeCount < nodeCount - 1) {
+            if (edgeCount < nodeCount - 1 && graphType.equals("tree")) {
                 JOptionPane.showMessageDialog(this, "边数过少！至少需要" + (nodeCount - 1) + "条边。");
                 return;
             }
@@ -327,7 +319,7 @@ public class AlgorithmViewPanel extends JPanel {
     protected void runNextStep() {
         if (stepCounter >= selectEdges.size()) {
             JOptionPane.showMessageDialog(this, "算法运行结束！\n" +
-                    " 最小边权和为：" + getAlgorithmValue());
+                    " 最终结果为：" + getAlgorithmValue());
             return;
         }
         if (stepCounter == -1) {
@@ -371,7 +363,8 @@ public class AlgorithmViewPanel extends JPanel {
         // 绘制权重
         int midX = (edge.getFrom().getX() + edge.getTo().getX()) / 2;
         int midY = (edge.getFrom().getY() + edge.getTo().getY()) / 2;
-        g.drawString(String.valueOf(edge.getWeight()), midX, midY);
+        if (isDrawNumber)
+            g.drawString(String.valueOf(edge.getWeight()), midX, midY);
     }
 
     // 绘制节点

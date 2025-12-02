@@ -25,13 +25,18 @@ public class AlgorithmSelectionPanel extends JPanel {
         String[] viewNames = {
                 MainAppFrame.VIEW_KRUSKAL, MainAppFrame.VIEW_PRIM, MainAppFrame.VIEW_TEAR_CYCLE,
                 MainAppFrame.VIEW_DIJKSTRA, MainAppFrame.VIEW_FLOYD, MainAppFrame.VIEW_FLOYD_WARSHALL,
-                MainAppFrame.VIEW_HUNGARIAN, MainAppFrame.VIEW_KUHN_MUNKRES, MainAppFrame.VIEW_EXIT
+                MainAppFrame.VIEW_HUNGARIAN, MainAppFrame.VIEW_KUHN_MUNKRES
         };
 
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = new JButton(buttonLabels[i]);
-            final String targetView = viewNames[i];
-            button.addActionListener(e -> parentFrame.showView(targetView));
+            if (i < viewNames.length) {
+                final String targetView = viewNames[i];
+                button.addActionListener(e -> parentFrame.showView(targetView));
+            } else {
+                // Special case for the exit button
+                button.addActionListener(e -> System.exit(0));
+            }
             add(button);
         }
     }

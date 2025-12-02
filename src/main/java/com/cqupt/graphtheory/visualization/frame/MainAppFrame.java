@@ -22,7 +22,6 @@ public class MainAppFrame extends JFrame {
     public static final String VIEW_FLOYD_WARSHALL = "FloydWarshallView";
     public static final String VIEW_HUNGARIAN = "HungarianView";
     public static final String VIEW_KUHN_MUNKRES = "KuhnMunkresView";
-    public static final String VIEW_EXIT = "ExitView";
 
 
     public MainAppFrame() {
@@ -45,11 +44,7 @@ public class MainAppFrame extends JFrame {
         cardPanel.add(new FloydPanel(this, VIEW_FLOYD), VIEW_FLOYD);
         cardPanel.add(new FloydWarshallPanel(this, VIEW_FLOYD_WARSHALL), VIEW_FLOYD_WARSHALL);
         cardPanel.add(new HungarianPanel(this, VIEW_HUNGARIAN), VIEW_HUNGARIAN);
-        cardPanel.add(new JLabel("Kuhn-Munkres算法内容", SwingConstants.CENTER), VIEW_KUHN_MUNKRES);
-
-        JButton exitButton = new JButton("退出");
-        exitButton.addActionListener(e -> System.exit(0));
-        cardPanel.add(exitButton, VIEW_EXIT);
+        cardPanel.add(new KuhnMunkresPanel(this, VIEW_KUHN_MUNKRES), VIEW_KUHN_MUNKRES);
 
         add(topPanel, BorderLayout.NORTH);
         add(cardPanel, BorderLayout.CENTER);

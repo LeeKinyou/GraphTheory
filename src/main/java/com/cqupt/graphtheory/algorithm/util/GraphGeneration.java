@@ -11,21 +11,37 @@ public class GraphGeneration extends Generation {
 
     @Override
     public ArrayList<Node> generateNodes(int count, JPanel graphPanel) {
+        if (count <= 0) {
+            return new ArrayList<>();
+        }
+
         ArrayList<Node> nodes = new ArrayList<>();
         Random random = new Random();
 
         int width = graphPanel.getWidth();
         int height = graphPanel.getHeight();
 
-        // 设置边界，避免节点太靠近边缘
         int margin = 50;
         int effectiveWidth = width - 2 * margin;
         int effectiveHeight = height - 2 * margin;
 
+        int gridCols = (int) Math.ceil(Math.sqrt(count));
+        int gridRows = (int) Math.ceil((double) count / gridCols);
+
+        int cellWidth = effectiveWidth / gridCols;
+        int cellHeight = effectiveHeight / gridRows;
+
         for (int i = 0; i < count; i++) {
-            // 随机生成坐标
-            int x = random.nextInt(effectiveWidth) + margin;
-            int y = random.nextInt(effectiveHeight) + margin;
+            int row = i / gridCols;
+            int col = i % gridCols;
+
+            int padding = cellWidth / 4;
+            int cellX = margin + col * cellWidth;
+            int cellY = margin + row * cellHeight;
+
+            int x = cellX + random.nextInt(Math.max(1, cellWidth - 2 * padding)) + padding;
+            int y = cellY + random.nextInt(Math.max(1, cellHeight - 2 * padding)) + padding;
+
             nodes.add(new Node(i, x, y));
         }
 
@@ -37,14 +53,11 @@ public class GraphGeneration extends Generation {
         ArrayList<Edge> edges = new ArrayList<>();
         Random random = new Random();
 
-        // 如果指定的边数超过完全图的边数，则调整为最大值
         int maxEdges = nodes.size() * (nodes.size() - 1) / 2;
         int targetEdgeCount = Math.min(count, maxEdges);
 
-        // 创建一个已存在边的集合，避免重复
         Set<String> existingEdges = new HashSet<>();
 
-        // 如果节点数大于1，至少创建一个连接确保图连通
         if (nodes.size() > 1) {
             int fromIndex = random.nextInt(nodes.size());
             int toIndex;
@@ -57,7 +70,6 @@ public class GraphGeneration extends Generation {
             existingEdges.add(getEdgeKey(fromIndex, toIndex));
         }
 
-        // 继续添加随机边直到达到目标数量
         while (edges.size() < targetEdgeCount) {
             int fromIndex = random.nextInt(nodes.size());
             int toIndex = random.nextInt(nodes.size());
@@ -78,12 +90,10 @@ public class GraphGeneration extends Generation {
     public Map<Integer, ArrayList<Map.Entry<Integer, Integer>>> generateAdjacencyList(ArrayList<Node> nodes, ArrayList<Edge> edges) {
         Map<Integer, ArrayList<Map.Entry<Integer, Integer>>> adjacencyList = new HashMap<>();
 
-        // 初始化每个节点的邻接表
         for (Node node : nodes) {
             adjacencyList.put(node.getId(), new ArrayList<>());
         }
 
-        // 填充邻接表
         for (Edge edge : edges) {
             int fromId = edge.getFrom().getId();
             int toId = edge.getTo().getId();
@@ -100,7 +110,6 @@ public class GraphGeneration extends Generation {
      * 获取边的唯一标识键
      */
     private String getEdgeKey(int fromIndex, int toIndex) {
-        // 确保较小的索引在前面，使无向图的边表示一致
         return fromIndex < toIndex ? fromIndex + "-" + toIndex : toIndex + "-" + fromIndex;
     }
 }
