@@ -73,6 +73,27 @@ public class AlgorithmViewPanel extends JPanel {
 
         // 初始化输入输出组件
         inputTextArea = new JTextArea(10, 20);
+
+        // 添加焦点监听器到初始化部分
+        inputTextArea.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (inputTextArea.getForeground() == Color.GRAY) {
+                    inputTextArea.setText("");
+                    inputTextArea.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (inputTextArea.getText().isEmpty()) {
+                    inputTextArea.setText("e.g.请输入邻接矩阵（不要加这两行）:\nadjacencyMatrix[i][j]代表从节点i到节点j有一条权为w的边\n4\n0 1 1 0\n1 0 0 0\n1 0 0 1\n0 0 1 0");
+                    inputTextArea.setForeground(Color.GRAY);
+                }
+            }
+        });
+        inputTextArea.setText("e.g.请输入邻接矩阵（不要加这两行）:\nadjacencyMatrix[i][j]代表从节点i到节点j有一条权为w的边\n4\n0 1 1 0\n1 0 0 0\n1 0 0 1\n0 0 1 0");
+        inputTextArea.setText("e.g.请输入邻接矩阵（不要加这两行）:\nadjacencyMatrix[i][j]代表从节点i到节点j有一条权为w的边\n4\n0 1 1 0\n1 0 0 0\n1 0 0 1\n0 0 1 0");
+        inputTextArea.setForeground(Color.GRAY);
+
         outputTextArea = new JTextArea(10, 20);
         outputTextArea.setEditable(false);
 
@@ -118,20 +139,16 @@ public class AlgorithmViewPanel extends JPanel {
         controlPanel.add(stepCounterLabel);
         add(controlPanel, BorderLayout.NORTH);
 
-        // 创建左侧面板（图显示区域）
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(graphPanel, BorderLayout.CENTER);
         add(leftPanel, BorderLayout.WEST);
 
-        // 创建右侧面板（输入输出区域）
         JPanel rightPanel = new JPanel(new GridLayout(2, 1));
 
-        // 输入区域
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("输入区域"));
         inputPanel.add(new JScrollPane(inputTextArea), BorderLayout.CENTER);
 
-        // 输出区域
         JPanel outputPanel = new JPanel(new BorderLayout());
         outputPanel.setBorder(BorderFactory.createTitledBorder("输出区域"));
         outputPanel.add(new JScrollPane(outputTextArea), BorderLayout.CENTER);
@@ -187,6 +204,69 @@ public class AlgorithmViewPanel extends JPanel {
     }
 
     protected void inputGenerateGraph() {
+        try {
+            // 解析输入数据
+            String[] lines = inputTextArea.getText().split("\n");
+            if (lines.length < 1) {
+                JOptionPane.showMessageDialog(this, "输入格式错误！");
+                return;
+            }
+
+            // 如果是提示文本，则不处理
+            if (inputTextArea.getForeground() == Color.GRAY) {
+                JOptionPane.showMessageDialog(this, "请输入有效数据！");
+                return;
+            }
+
+            // 获取节点数量
+            int nodeCount = Integer.parseInt(lines[0]);
+            if (nodeCount <= 0) {
+                JOptionPane.showMessageDialog(this, "节点数必须大于0！");
+                return;
+            }
+
+            // 检查是否有足够的行数
+            if (lines.length < nodeCount + 1) {
+                JOptionPane.showMessageDialog(this, "输入矩阵行数不足！");
+                return;
+            }
+
+            // 清空现有数据
+            nodes.clear();
+            edges.clear();
+            selectEdges.clear();
+            stepCounter = -1;
+
+            // 生成节点
+            nodes = GraphGenerationFactory.generateNodes(graphType, nodeCount, graphPanel);
+
+            // 解析邻接矩阵并生成边
+            for (int i = 1; i <= nodeCount; i++) {
+                String[] weights = lines[i].trim().split("\\s+");
+                if (weights.length != nodeCount) {
+                    JOptionPane.showMessageDialog(this, "第" + i + "行权重数量错误！");
+                    return;
+                }
+
+                for (int j = 0; j < nodeCount; j++) {
+                    int weight = Integer.parseInt(weights[j]);
+                    // 只处理上三角部分避免重复边，且不处理自己到自己的边
+                    if (i-1 < j && weight > 0) {
+                        Edge edge = new Edge(nodes.get(i-1), nodes.get(j), weight);
+                        edges.add(edge);
+                    }
+                }
+            }
+
+            graphPanel.repaint();
+            JOptionPane.showMessageDialog(this, "图生成成功！");
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "请输入有效的数字！");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "输入格式错误：" + ex.getMessage());
+        }
+
     }
 
     protected void generateGraph() {
@@ -194,7 +274,6 @@ public class AlgorithmViewPanel extends JPanel {
             int nodeCount = Integer.parseInt(nodeCountField.getText());
             int edgeCount = Integer.parseInt(edgeCountField.getText());
 
-            // 验证输入合法性
             if (nodeCount <= 0 || edgeCount < 0) {
                 JOptionPane.showMessageDialog(this, "请输入有效的节点数和边数！");
                 return;
