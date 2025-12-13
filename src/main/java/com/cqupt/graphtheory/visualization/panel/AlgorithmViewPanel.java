@@ -243,7 +243,7 @@ public class AlgorithmViewPanel extends JPanel {
 
                 for (int j = 0; j < nodeCount; j++) {
                     int weight = Integer.parseInt(weights[j]);
-                    if (i-1 < j && weight > 0) {
+                    if (i-1 < j && weight >= 0) {
                         Edge edge = new Edge(nodes.get(i-1), nodes.get(j), weight);
                         edges.add(edge);
                     }
