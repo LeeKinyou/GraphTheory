@@ -70,7 +70,11 @@ public class FloydWarshallPanel extends AlgorithmViewPanel {
             sb.append("\n");
         }
         sb.append("\n最短路径长度为:\n");
-        sb.append(String.format("%-4s", distance.get(floydWarshall.getS()).get(floydWarshall.getT())));
+        if (distance.get(floydWarshall.getS()).get(floydWarshall.getT()) == Integer.MAX_VALUE) {
+            sb.append("INF");
+        } else {
+            sb.append(String.format("%-4s", distance.get(floydWarshall.getS()).get(floydWarshall.getT())));
+        }
         return sb.toString();
     }
 

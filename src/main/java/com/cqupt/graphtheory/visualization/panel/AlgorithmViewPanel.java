@@ -13,6 +13,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.QuadCurve2D;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class AlgorithmViewPanel extends JPanel {
@@ -46,6 +48,8 @@ public class AlgorithmViewPanel extends JPanel {
     protected Integer stepCounter = -1;
     protected Boolean isDrawNumber = true;
     protected String graphType;
+    private Image leftImage;
+    private Image rightImage;
     
     public AlgorithmViewPanel(MainAppFrame parent, String algorithmName) {
         this.parentFrame = parent;
@@ -53,9 +57,25 @@ public class AlgorithmViewPanel extends JPanel {
         nodes = new ArrayList<>();
         edges = new ArrayList<>();
         selectEdges = new ArrayList<>();
+        loadImages();
         initializeComponents();
         setupLayout();
         addEventListeners();
+    }
+
+    private void loadImages() {
+        try {
+            URL leftImageUrl = getClass().getResource("/images/left.png");
+//            URL rightImageUrl = getClass().getResource("/images/right.png");
+            if (leftImageUrl != null) {
+                leftImage = new ImageIcon(leftImageUrl).getImage();
+            }
+//            if (rightImageUrl != null) {
+//                rightImage = new ImageIcon(rightImageUrl).getImage();
+//            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     private void initializeComponents() {
@@ -104,6 +124,22 @@ public class AlgorithmViewPanel extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                // 绘制背景
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.15f));
+                
+                int width = getWidth();
+                int height = getHeight();
+
+                if (leftImage != null) {
+                    g2d.drawImage(leftImage, 0, 0, width / 2, height, this);
+                }
+//                if (rightImage != null) {
+//                    g2d.drawImage(rightImage, width / 2, 0, width / 2, height, this);
+//                }
+                g2d.dispose();
+
+                // 绘制图形
                 drawGraph(g);
             }
         };
@@ -243,9 +279,16 @@ public class AlgorithmViewPanel extends JPanel {
 
                 for (int j = 0; j < nodeCount; j++) {
                     int weight = Integer.parseInt(weights[j]);
-                    if (i-1 < j && weight >= 0) {
-                        Edge edge = new Edge(nodes.get(i-1), nodes.get(j), weight);
-                        edges.add(edge);
+                    if (isDirectedGraph()) {
+                        if (weight > 0) {
+                            Edge edge = new Edge(nodes.get(i - 1), nodes.get(j), weight);
+                            edges.add(edge);
+                        }
+                    } else {
+                        if (i - 1 < j && weight > 0) {
+                            Edge edge = new Edge(nodes.get(i - 1), nodes.get(j), weight);
+                            edges.add(edge);
+                        }
                     }
                 }
             }
@@ -270,16 +313,17 @@ public class AlgorithmViewPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "请输入有效的节点数和边数！");
                 return;
             }
-
-            // 边数不能超过完全图的边数
-            int maxEdges = nodeCount * (nodeCount - 1) / 2;
-            if (edgeCount > maxEdges) {
-                JOptionPane.showMessageDialog(this, "边数过多！最多只能有" + maxEdges + "条边。");
-                return;
-            }
-            if (edgeCount < nodeCount - 1 && graphType.equals("tree")) {
-                JOptionPane.showMessageDialog(this, "边数过少！至少需要" + (nodeCount - 1) + "条边。");
-                return;
+            if (!isDirectedGraph()) {
+                // 边数不能超过完全图的边数
+                int maxEdges = nodeCount * (nodeCount - 1) / 2;
+                if (edgeCount > maxEdges) {
+                    JOptionPane.showMessageDialog(this, "边数过多！最多只能有" + maxEdges + "条边。");
+                    return;
+                }
+                if (edgeCount < nodeCount - 1 && graphType.equals("tree")) {
+                    JOptionPane.showMessageDialog(this, "边数过少！至少需要" + (nodeCount - 1) + "条边。");
+                    return;
+                }
             }
 
             nodes.clear();
@@ -356,15 +400,85 @@ public class AlgorithmViewPanel extends JPanel {
         }
     }
 
+    private boolean isDirectedGraph() {
+        return algorithmName.equals("DijkstraView") || algorithmName.equals("FloydView")
+                || algorithmName.equals("FloydWarshallView");
+    }
+
+    private void drawArrowhead(Graphics2D g, int x, int y, double angle) {
+        int arrowLength = 10;
+        double arrowAngle = Math.toRadians(25);
+
+        double x1 = x - arrowLength * Math.cos(angle - arrowAngle);
+        double y1 = y - arrowLength * Math.sin(angle - arrowAngle);
+        double x2 = x - arrowLength * Math.cos(angle + arrowAngle);
+        double y2 = y - arrowLength * Math.sin(angle + arrowAngle);
+        g.drawLine(x, y, (int) x1, (int) y1);
+        g.drawLine(x, y, (int) x2, (int) y2);
+    }
+
     // 绘制单条边
     protected void drawEdge(Graphics g, Edge edge) {
-        g.drawLine(edge.getFrom().getX(), edge.getFrom().getY(), edge.getTo().getX(), edge.getTo().getY());
+        if (isDirectedGraph()) {
+            Graphics2D g2d = (Graphics2D) g;
+            int x1 = edge.getFrom().getX();
+            int y1 = edge.getFrom().getY();
+            int x2 = edge.getTo().getX();
+            int y2 = edge.getTo().getY();
 
-        // 绘制权重
-        int midX = (edge.getFrom().getX() + edge.getTo().getX()) / 2;
-        int midY = (edge.getFrom().getY() + edge.getTo().getY()) / 2;
-        if (isDrawNumber)
-            g.drawString(String.valueOf(edge.getWeight()), midX, midY);
+            double angle = Math.atan2(y2 - y1, x2 - x1);
+            int nodeRadius = 15;
+
+            boolean hasReverse = false;
+            for (Edge e : edges) {
+                if (e.getTo() == edge.getFrom() && e.getFrom() == edge.getTo()) {
+                    hasReverse = true;
+                    break;
+                }
+            }
+
+            if (hasReverse && edge.getFrom().getId() > edge.getTo().getId()) {
+                double midX = (x1 + x2) / 2.0;
+                double midY = (y1 + y2) / 2.0;
+                double dx = x2 - x1;
+                double dy = y2 - y1;
+
+                double ctrlx = midX - dy * 0.1;
+                double ctrly = midY + dx * 0.1;
+
+                QuadCurve2D q = new QuadCurve2D.Double(x1, y1, ctrlx, ctrly, x2, y2);
+                g2d.draw(q);
+
+                // 箭头绘制在曲线的顶点（t=0.5处）
+                double arrowX = (midX + ctrlx) / 2.0;
+                double arrowY = (midY + ctrly) / 2.0;
+                
+                drawArrowhead(g2d, (int)arrowX, (int)arrowY, angle);
+
+                if (isDrawNumber) {
+                    int labelX = (int) (midX - dy * 0.06);
+                    int labelY = (int) (midY + dx * 0.06);
+                    g.drawString(String.valueOf(edge.getWeight()), labelX, labelY);
+                }
+            } else {
+                g.drawLine(x1, y1, x2, y2);
+                
+                // 箭头绘制在线段中点
+                int midX = (x1 + x2) / 2;
+                int midY = (y1 + y2) / 2;
+                drawArrowhead(g2d, midX, midY, angle);
+
+                if (isDrawNumber)
+                    g.drawString(String.valueOf(edge.getWeight()), midX + 5, midY - 5);
+            }
+        } else {
+            g.drawLine(edge.getFrom().getX(), edge.getFrom().getY(), edge.getTo().getX(), edge.getTo().getY());
+
+            int midX = (edge.getFrom().getX() + edge.getTo().getX()) / 2;
+            int midY = (edge.getFrom().getY() + edge.getTo().getY()) / 2;
+            if (isDrawNumber)
+                g.drawString(String.valueOf(edge.getWeight()), midX, midY);
+        }
     }
 
     // 绘制节点

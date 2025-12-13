@@ -41,6 +41,7 @@ public class GraphGenerationFactory {
     public static ArrayList<ArrayList<Integer>> generateAdjacencyMatrix(String type, ArrayList<Node> nodes, ArrayList<Edge> edges) {
         return switch (type.toLowerCase()) {
             case "tree" -> new TreeGeneration().generateAdjacencyMatrix(nodes, edges);
+            case "graph" -> new GraphGeneration().generateAdjacencyMatrix(nodes, edges);
             default -> throw new IllegalArgumentException("Unknown generation type: " + nodes.size());
         };
     }

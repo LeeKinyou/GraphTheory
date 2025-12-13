@@ -53,31 +53,19 @@ public class GraphGeneration extends Generation {
         ArrayList<Edge> edges = new ArrayList<>();
         Random random = new Random();
 
-        int maxEdges = nodes.size() * (nodes.size() - 1) / 2;
+        int maxEdges = nodes.size() * (nodes.size() - 1);
         int targetEdgeCount = Math.min(count, maxEdges);
 
         Set<String> existingEdges = new HashSet<>();
-
-        if (nodes.size() > 1) {
-            int fromIndex = random.nextInt(nodes.size());
-            int toIndex;
-            do {
-                toIndex = random.nextInt(nodes.size());
-            } while (toIndex == fromIndex);
-
-            int weight = random.nextInt(20) + 1;
-            edges.add(new Edge(nodes.get(fromIndex), nodes.get(toIndex), weight));
-            existingEdges.add(getEdgeKey(fromIndex, toIndex));
-        }
 
         while (edges.size() < targetEdgeCount) {
             int fromIndex = random.nextInt(nodes.size());
             int toIndex = random.nextInt(nodes.size());
 
-            if (fromIndex != toIndex && !existingEdges.contains(getEdgeKey(fromIndex, toIndex))) {
+            if (fromIndex != toIndex && !existingEdges.contains(fromIndex + "->" + toIndex)) {
                 int weight = random.nextInt(20) + 1;
                 edges.add(new Edge(nodes.get(fromIndex), nodes.get(toIndex), weight));
-                existingEdges.add(getEdgeKey(fromIndex, toIndex));
+                existingEdges.add(fromIndex + "->" + toIndex);
             }
         }
 
@@ -100,10 +88,35 @@ public class GraphGeneration extends Generation {
             int weight = edge.getWeight();
 
             adjacencyList.get(fromId).add(new AbstractMap.SimpleEntry<>(toId, weight));
-            adjacencyList.get(toId).add(new AbstractMap.SimpleEntry<>(fromId, weight));
         }
 
         return adjacencyList;
+    }
+
+    public ArrayList<ArrayList<Integer>> generateAdjacencyMatrix(ArrayList<Node> nodes, ArrayList<Edge> edges) {
+        int n = nodes.size();
+        ArrayList<ArrayList<Integer>> adjacencyMatrix = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            ArrayList<Integer> row = new ArrayList<>(n);
+            for (int j = 0; j < n; j++) {
+                if (i == j) {
+                    row.add(0);
+                } else {
+                    row.add(Integer.MAX_VALUE);
+                }
+            }
+            adjacencyMatrix.add(row);
+        }
+
+        for (Edge edge : edges) {
+            int fromId = edge.getFrom().getId();
+            int toId = edge.getTo().getId();
+            int weight = edge.getWeight();
+            if (fromId < n && toId < n) {
+                adjacencyMatrix.get(fromId).set(toId, weight);
+            }
+        }
+        return adjacencyMatrix;
     }
 
     /**

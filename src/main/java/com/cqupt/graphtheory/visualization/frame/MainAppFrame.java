@@ -4,6 +4,7 @@ import com.cqupt.graphtheory.visualization.panel.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 /**
  * 主框架
@@ -28,6 +29,11 @@ public class MainAppFrame extends JFrame {
         setTitle("图论大作业");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        URL iconURL = getClass().getResource("/icon/icon.png");
+        if (iconURL != null) {
+            setIconImage(new ImageIcon(iconURL).getImage());
+        }
 
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);

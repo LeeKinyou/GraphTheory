@@ -59,7 +59,11 @@ public class DijkstraPanel extends AlgorithmViewPanel {
             }
         }
         stringBuilder.append("\n最短路径长度为:\n");
-        stringBuilder.append(String.format("%-4s", dijkstra.getDistance().get(dijkstra.getT())));
+        if (dijkstra.getDistance().get(dijkstra.getT()) == Integer.MAX_VALUE) {
+            stringBuilder.append("INF");
+        } else {
+            stringBuilder.append(String.format("%-4s", dijkstra.getDistance().get(dijkstra.getT())));
+        }
         return stringBuilder.toString();
     }
 

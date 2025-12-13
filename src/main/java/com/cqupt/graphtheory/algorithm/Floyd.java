@@ -18,7 +18,7 @@ public class Floyd {
     private final int t;
 
     public Floyd(ArrayList<Node> nodes, ArrayList<Edge> edges, int s, int t) {
-        graph = GraphGenerationFactory.generateAdjacencyMatrix("tree", nodes, edges);
+        graph = GraphGenerationFactory.generateAdjacencyMatrix("graph", nodes, edges);
         distance = new ArrayList<>();
         this.s = s;
         this.t = t;

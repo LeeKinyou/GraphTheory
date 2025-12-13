@@ -51,6 +51,7 @@ public class Dijkstra {
                 continue;
             }
             visited.set(u, true);
+            if (adjacencyList.get(u) == null) continue;
             for (Map.Entry<Integer, Integer> neighbor : adjacencyList.get(u)) {
                 int v = neighbor.getKey();
                 int weight = neighbor.getValue();
@@ -64,7 +65,7 @@ public class Dijkstra {
         ArrayList<Edge> shortestPath = new ArrayList<>();
         int current = t;
         while (parent.get(current) != -1) {
-            shortestPath.add(findNode(current, parent.get(current)));
+            shortestPath.add(findNode(parent.get(current), current));
             current = parent.get(current);
         }
         Collections.reverse(shortestPath);
@@ -77,9 +78,6 @@ public class Dijkstra {
     private Edge findNode(int from, int to) {
         for (Edge edge : edges) {
             if (edge.getFrom().getId() == from && edge.getTo().getId() == to) {
-                return edge;
-            }
-            if (edge.getFrom().getId() == to && edge.getTo().getId() == from) {
                 return edge;
             }
         }

@@ -72,7 +72,11 @@ public class FloydPanel extends AlgorithmViewPanel {
             sb.append("\n");
         }
         sb.append("\n最短路径长度为:\n");
-        sb.append(String.format("%-4s", distance.get(floyd.getS()).get(floyd.getT())));
+        if (distance.get(floyd.getS()).get(floyd.getT()) == Integer.MAX_VALUE) {
+            sb.append("INF");
+        } else {
+            sb.append(String.format("%-4s", distance.get(floyd.getS()).get(floyd.getT())));
+        }
         return sb.toString();
     }
 
