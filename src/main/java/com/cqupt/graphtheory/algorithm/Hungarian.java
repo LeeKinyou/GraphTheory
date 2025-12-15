@@ -27,6 +27,8 @@ public class Hungarian {
         this.edges = edges;
         this.totalSize = nodes.size();
         this.uSize = this.totalSize / 2;
+        this.match = new ArrayList<>(totalSize);
+        this.visited = new ArrayList<>(totalSize);
 
         this.graph = new HashMap<>();
         for (int i = 0; i < uSize; i++) {
